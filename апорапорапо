@@ -1,0 +1,115 @@
+from itertools import chain
+
+class Enrolee:
+    def __init__(self, name, prefer, points):
+        self.prefer = prefer   # список предпочтений от наиб к наим
+        self.points = points
+        self.name = name
+
+
+class Faculty:
+    def __init__(self, name, num_vacant_places):
+        self.num_vacant_places = num_vacant_places   # список бюджетных мест на каждую специальность
+        self.name = name
+
+
+def stable_matching(ab, prefer, countabit):
+    global lost_equal_abit
+    abit = (ab.name, ab.points)
+    print(abit)
+    if count1 == 0:
+        passed_studets[prefer - 1][countabit-1].append(abit)
+        print(passed_studets[prefer - 1])
+    else:
+        last_abit = sorted(passed_studets[prefer-1][count2-1], key=lambda abit: abit[1], reverse=True)[-1]
+        last_abit_points = last_abit[0][1]
+        if ab.points < last_abit_points:
+            pass
+        elif ab.points > last_abit_points:
+            passed_studets[prefer-1][count2-1].append(abit)
+        elif ab.points == last_abit_points:
+            #print(f"{last_abit} последний прошедший")
+            #print(f"{abit} у кого с ним одинакого баллов")
+            passed_studets[prefer-1][count2-1].append(abit)
+            if abit not in lost_equal_abit:
+                lost_equal_abit.append(abit)
+            if last_abit not in lost_equal_abit:
+                lost_equal_abit.append(last_abit)
+
+
+
+ab1 = Enrolee("abit1", ["c1", "c3", "c2"], 273)
+ab2 = Enrolee("abit2", ["c2", "c1", "c3"], 242)
+ab3 = Enrolee("abit3", ["c1", "c3", "c2"], 257)
+ab4 = Enrolee("abit4", ["c3", "c2", "c1"], 302)
+ab5 = Enrolee("abit5", ["c1", "c3", "c2"], 264)
+ab6 = Enrolee("abit6", ["c3", "c1", "c2"], 257)
+ab7 = Enrolee("abit7", ["c1", "c3", "c2"], 278)
+ab8 = Enrolee("abit8", ["c3", "c1", "c2"], 298)
+ab9 = Enrolee("abit9", ["c1", "c2", "c3"], 237)
+ab10 = Enrolee("abit10", ["c2", "c3", "c1"], 259)
+ab11 = Enrolee("abit11", ["c2", "c1", "c3"], 278)
+ab12 = Enrolee("abit12", ["c2", "c3", "c1"], 280)
+
+applicants = [ab1, ab2, ab3, ab4, ab5, ab6, ab7, ab8, ab9, ab10, ab11, ab12]
+
+fac1 = Faculty("dtg", 3)
+fac2 = Faculty("srf", 2)
+fac3 = Faculty("stts", 5)
+faculties = [fac1.num_vacant_places, fac2.num_vacant_places, fac3.num_vacant_places]
+
+f = {}
+for i in range(len(faculties)):
+    f[f"c{i + 1}"] = i + 1
+
+# ПЕРЕДЕЛАТЬ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+def equel_abits_problem(passed_abit, eqlostabit):
+    passedset = set(passed_abit)
+    eqlost = set(eqlostabit)
+    intersect = list(passedset.intersection(eqlost))
+    if intersect == eqlostabit:
+        for elem in intersect:
+            l.append(elem)
+            eqlostabit.remove(elem)
+    else:
+        for elem in intersect:
+            print(f"у вас на специальности{passed_abit} абитуриент {elem} с одинаковыми баллами")
+            l.append(elem)
+            print(f"у вас на специальности{passed_abit} абитуриент {elem} с одинаковыми баллами")
+            eqlostabit.remove(elem)
+
+
+count1 = 0
+count2 = 0
+lost_equal_abit = []
+passed_studets = [[] for _ in range(len(faculties))]
+for i, m  in enumerate(passed_studets):
+    passed_studets[i] = [[] for _ in range(len(applicants))]
+print(passed_studets)
+
+for i in range(len(faculties)):
+    for ab in applicants:
+        abit = (ab.name, ab.points)
+        pref = f[ab.prefer[i]]
+        if abit not in list(chain(*passed_studets)):
+            count2 = count2 + 1
+            stable_matching(ab, pref, count2)
+            
+            
+            
+            
+            
+            
+    for e, l in enumerate(passed_studets):
+        l.sort(key=lambda abit: abit[0][1], reverse=True)
+        l_copy = l
+        l = l[:faculties[e]]
+        if len(lost_equal_abit) != 0 and len(list(filter(lambda x: x in l, lost_equal_abit))) != 0: # какое-то условие для проверки того что это список где есть абитуриенты из лост иквел абит:
+            print(f'вызывается функция с {l, lost_equal_abit}')
+            equel_abits_problem(l, lost_equal_abit)
+        print(f"копия{l_copy} , сама л {l}, !!!!!{lost_equal_abit}")
+        passed_studets[e] = l
+    count = count1 + 1
+
+print(*passed_studets, sep="\n")
+
